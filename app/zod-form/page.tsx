@@ -34,6 +34,16 @@ const formSchema = z.object({
     .min(1, "お名前は必須です")
     .max(50, "50文字以内で入力してください"),
 
+  // 電話番号
+  // - 任意入力（必須ではない）
+  // - 入力された場合は 10〜11桁の数字のみ
+  // - ハイフンなし
+  phone: z
+    .string()
+    .regex(/^[0-9]{10,11}$/, "10〜11桁の数字で入力してください")
+    .optional()         // 任意入力
+    .or(z.literal("")), // 空文字も OK にする
+
   // 種別
   // - 許可された値のみ（enum）
   // - これで DevTools で追加した値は弾かれる！
@@ -141,6 +151,26 @@ export default function ZodForm() {
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">
                 {errors.name.message}
+              </p>
+            )}
+          </div>
+
+          {/* 電話番号 */}
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              電話番号
+            </label>
+            <input
+              type="text"
+              {...register("phone")}
+              className={`shadow border rounded w-full py-2 px-3 text-gray-700${
+                errors.phone ? "border-red-500" : ""
+              }`}
+              placeholder="09012345678"
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.phone.message}
               </p>
             )}
           </div>
